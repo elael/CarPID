@@ -1,50 +1,22 @@
 #ifndef PID_H
 #define PID_H
 
+#include <array>
+
 class PID {
- public:
-  /**
-   * Constructor
-   */
-  PID();
+  public:
+  PID(double Kp, double Ki = 0, double Kd = 0, double dt = 1);
 
-  /**
-   * Destructor.
-   */
-  virtual ~PID();
+  double input(double measurement);
 
-  /**
-   * Initialize PID.
-   * @param (Kp_, Ki_, Kd_) The initial PID coefficients
-   */
-  void Init(double Kp_, double Ki_, double Kd_);
+  double output() const {return output_;}
 
-  /**
-   * Update the PID error variables given cross track error.
-   * @param cte The current cross track error
-   */
-  void UpdateError(double cte);
+  private:
+  std::array<double, 3> coefs_;
+  std::array<double, 3> measurements_ = {0,0,0};
+  size_t sample_index_ = 0;
+  double output_ = 0;
 
-  /**
-   * Calculate the total PID error.
-   * @output The total PID error
-   */
-  double TotalError();
-
- private:
-  /**
-   * PID Errors
-   */
-  double p_error;
-  double i_error;
-  double d_error;
-
-  /**
-   * PID Coefficients
-   */ 
-  double Kp;
-  double Ki;
-  double Kd;
 };
 
 #endif  // PID_H
