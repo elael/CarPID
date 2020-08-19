@@ -33,12 +33,9 @@ string hasData(string s) {
 int main() {
   uWS::Hub h;
 
-  PID pid(-0.1, -0.001, -0.4);
-  /**
-   * TODO: Initialize the pid variable.
-   */
-
-  h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
+  PID pid_steering(-0.135, -0.0001, -1.);
+  
+  h.onMessage([&](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
