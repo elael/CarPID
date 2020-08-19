@@ -1,9 +1,11 @@
 #include <math.h>
 #include <uWS/uWS.h>
+
 #include <iostream>
 #include <string>
-#include "json.hpp"
+
 #include "PID.h"
+#include "json.hpp"
 
 // for convenience
 using nlohmann::json;
@@ -23,8 +25,7 @@ string hasData(string s) {
   auto b2 = s.find_last_of("]");
   if (found_null != string::npos) {
     return "";
-  }
-  else if (b1 != string::npos && b2 != string::npos) {
+  } else if (b1 != string::npos && b2 != string::npos) {
     return s.substr(b1, b2 - b1 + 1);
   }
   return "";
@@ -36,9 +37,9 @@ int main() {
   PID pid_steering(-0.135, -0.0001, -1.);
   PID pid_throttle(0.1, 0, 0.01);
   constexpr double target_speed = 30;
-  
-  h.onMessage([&](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
-                     uWS::OpCode opCode) {
+
+  h.onMessage([&](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+                  uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -55,10 +56,10 @@ int main() {
           double cte = std::stod(j[1]["cte"].get<string>());
           double speed = std::stod(j[1]["speed"].get<string>());
           // double angle = std::stod(j[1]["steering_angle"].get<string>());
-          
+
           double steer_value = pid_steering.input(cte);
           double throttle_value = pid_throttle.input(target_speed - speed);
-          
+
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = throttle_value;
@@ -71,13 +72,13 @@ int main() {
         ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
       }
     }  // end websocket message if
-  }); // end h.onMessage
+  });  // end h.onMessage
 
   h.onConnection([&h](uWS::WebSocket<uWS::SERVER> ws, uWS::HttpRequest req) {
     std::cout << "Connected!!!" << std::endl;
   });
 
-  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, 
+  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code,
                          char *message, size_t length) {
     ws.close();
     std::cout << "Disconnected" << std::endl;
@@ -90,6 +91,6 @@ int main() {
     std::cerr << "Failed to listen to port" << std::endl;
     return -1;
   }
-  
+
   h.run();
 }
