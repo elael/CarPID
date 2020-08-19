@@ -14,7 +14,7 @@ class PID {
   private:
   std::array<double, 3> coefs_;
   std::array<double, 3> measurements_ = {0,0,0};
-  size_t sample_index_ = 0;
+  u_int8_t sample_index_ = 0;
   double output_ = 0;
 
 };
